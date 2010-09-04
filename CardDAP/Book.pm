@@ -25,6 +25,7 @@ sub entries {
         $entry->add( objectClass => [qw[top person organizationalPerson inetOrgPerson mozillaAbPersonAlpha]] );
         $entry->add( givenName => $vcard->get('moniker')->[0]->given() );
         $entry->add( cn => $vcard->fullname() );
+        $entry->add( uid => $id );
         my @mail = map {$_->value()} @{ $vcard->get("EMAIL") };
         $entry->add( mail => [@mail] );
         $entry->add( telephoneNumer => [ map {$_->value()} @{$vcard->get("tel")} ] );

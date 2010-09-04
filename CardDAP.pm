@@ -6,6 +6,8 @@ use Data::Dumper;
 
 use Net::LDAP::Constant qw(LDAP_SUCCESS);
 use Net::LDAP::Server;
+use Net::LDAP::Filter;
+use Net::LDAP::FilterMatch;
 use base 'Net::LDAP::Server';
 use fields qw(book);
 
@@ -38,13 +40,19 @@ sub search {
 	my $reqData = shift;
 	print "Searching...\n";
 	my $base = $reqData->{'baseObject'};
-	my $filter = $reqData->{filter};
+	my $filter = bless $reqData->{filter}, "Net::LDAP::Filter";
+        print $filter->as_string, "--\n";
 
 	my @entries;
 	if ($reqData->{'scope'}) {
-                push @entries, $self->{book}->entries;
+            push @entries, grep {$filter->match($_)} $self->{book}->entries;
 	} else {
-                push @entries, $self->{book}->entries;
+            my $entry = Net::LDAP::Entry->new;
+            $entry->dn($base);
+            $entry->add(
+                dn => $base
+            );
+            push @entries, $entry;
 	}
 	return RESULT_OK, @entries;
 }
