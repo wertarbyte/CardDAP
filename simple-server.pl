@@ -8,14 +8,17 @@ use IO::Socket;
 use CardDAP;
 use CardDAP::Book;
 
-my $book = new CardDAP::Book("dc=foo", @ARGV);
+my $basedn = shift @ARGV;
+print "Base path is: $basedn\n";
+
+my $book = new CardDAP::Book($basedn, @ARGV);
 
 my $sock = IO::Socket::INET->new(
 	Listen => 5,
 	Proto => 'tcp',
 	Reuse => 1,
 	LocalPort => 8080
-);
+) || die $!;
 
 my $sel = IO::Select->new($sock);
 my %Handlers;
