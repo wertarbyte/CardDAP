@@ -24,6 +24,7 @@ sub entries {
         $entry->dn("uid=$id, $base");
         $entry->add( objectClass => [qw[top person organizationalPerson inetOrgPerson mozillaAbPersonAlpha]] );
         $entry->add( givenName => $vcard->get('moniker')->[0]->given() );
+        $entry->add( sn => $vcard->get('moniker')->[0]->family() );
         $entry->add( cn => $vcard->fullname() );
         $entry->add( uid => $id );
         my @mail = map {$_->value()} @{ $vcard->get("EMAIL") };
